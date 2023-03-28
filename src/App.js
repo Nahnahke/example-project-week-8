@@ -1,40 +1,46 @@
-import React, { useState } from 'react';
-import { Name } from 'components/Name';
-import { Food } from 'components/Food';
-import { Drink } from 'components/Drink';
-import { Result } from 'components/Result';
+import NotFound from 'components/NotFound';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
+import List from 'components/List';
+import Details from 'components/Details';
+import Header from 'components/Header';
 
 export const App = () => {
-  const [step, setStep] = useState(1);
-  const [name, setName] = useState('');
-  const [food, setFood] = useState('');
-  const [drink, setDrink] = useState('');
+  const [list, setList] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const handleStepIncrease = () => {
-    setStep(step + 1);
+  useEffect(() => {
+    setLoading(true);
+    fetch('https://pokeapi.co/api/v2/pokemon')
+      .then((response) => response.json())
+      .then((data) => {
+        setList(data.results)
+      })
+      .catch((e) => {
+        console.error(e)
+      })
+      .finally(() => {
+        setLoading(false);
+      })
+  }, []);
+
+  if (loading) {
+    return (
+      <p>Loading...</p>
+    );
   }
 
   return (
-    <>
-      {step === 1 && (
-        <Name name={name} setName={setName} />
-      )}
-      {step === 2 && (
-        <Food food={food} setFood={setFood} />
-      )}
-      {step === 3 && (
-        <Drink drink={drink} setDrink={setDrink} />
-      )}
-      {step >= 4 && (
-        <Result name={name} food={food} drink={drink} />
-      )}
-
-      {step < 4 && (
-        <>
-          <p>Current step: {step}</p>
-          <button type="button" onClick={handleStepIncrease}>Next step</button>
-        </>
-      )}
-    </>
+    <div>
+      <BrowserRouter>
+        <Header />
+        <Routes>
+          <Route path="/" element={<List pokemons={list} />} />
+          <Route path="/details/:pokemonName" element={<Details />} />
+          <Route path="/404" element={<NotFound />} />
+          <Route path="*" element={<Navigate to="/404" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </div>
   );
 }
