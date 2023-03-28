@@ -3,12 +3,12 @@ import { Link } from 'react-router-dom';
 
 const Header = () => {
   return (
-    <Header>
+    <header>
       <nav>
         <Link to="/details">Details</Link>
         <Link to="/">List</Link>
       </nav>
-    </Header>
+    </header>
   )
 }
 

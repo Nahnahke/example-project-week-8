@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 const List = ({ pokemons }) => {
   return (
-    <section className="List">
+    <section className="list">
       {pokemons.map((pokemon) => {
         return (
           <Link
